@@ -1,2 +1,11 @@
 PA3.zip
 PA3/dataset/Image_Harmonization_Dataset.zip
+PA3/dataset/Image_Harmonization_Dataset/
+PA3/dataset/HCOCO/
+PA3/dataset/HAdobe5k/
+PA3/dataset/Hday2night/
+PA3/dataset/HFlickr
+PA3/dataset_processing/HCOCO/
+PA3/dataset_processing/HAdobe5k/
+PA3/dataset_processing/Hday2night/
+PA3/dataset_processing/HFlickr
