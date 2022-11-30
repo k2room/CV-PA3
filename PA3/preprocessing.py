@@ -28,32 +28,34 @@ if __name__=='__main__':
         os.makedirs(os.path.join(save_path_folder, 'masks'), exist_ok=True)
         os.makedirs(os.path.join(save_path_folder, 'real_images'), exist_ok=True)
 
-    for images in [train_list, test_list]:
-        for img in tqdm(images):
-            comp_path = img
-            name_parts = img.split('_')
-            mask_path = img.replace('composite_images','masks')
-            mask_path = mask_path.replace(('_'+name_parts[-1]),'.png')
-            real_path = img.replace('composite_images','real_images')
-            real_path = real_path.replace(('_'+name_parts[-2]+'_'+name_parts[-1]),'.jpg')
+    all_list = train_list+test_list
+    print("IHD_train :", len(train_list), " |  IHD_test :", len(test_list))
+    for img in tqdm(all_list):
+        name_parts = img.split('_')
+        comp_path = img
+        save_comp_path = os.path.join(save_path, comp_path)
+        if os.path.exists(save_comp_path):
+            continue
 
-            save_comp_path = os.path.join(save_path, comp_path)
-            save_mask_path = os.path.join(save_path, mask_path)
-            save_real_path = os.path.join(save_path, real_path)
+        mask_path = img.replace('composite_images','masks')
+        mask_path = mask_path.replace(('_'+name_parts[-1]),'.png')
+        save_mask_path = os.path.join(save_path, mask_path)
 
-            if os.path.exists(save_comp_path):
-                continue
+        real_path = img.replace('composite_images','real_images')
+        real_path = real_path.replace(('_'+name_parts[-2]+'_'+name_parts[-1]),'.jpg')
+        save_real_path = os.path.join(save_path, real_path)
 
-            comp = cv2.imread(os.path.join(path, comp_path))
-            comp = cv2.resize(comp, dsize = save_size, interpolation = cv2.INTER_CUBIC)
-            mask = cv2.imread(os.path.join(path, mask_path))
-            mask = cv2.resize(mask, dsize = save_size, interpolation = cv2.INTER_NEAREST)
-            real = cv2.imread(os.path.join(path, real_path))
-            real = cv2.resize(real, dsize = save_size, interpolation = cv2.INTER_CUBIC)
+        # image read and resize
+        comp = cv2.imread(os.path.join(path, comp_path))
+        comp = cv2.resize(comp, dsize = save_size, interpolation = cv2.INTER_CUBIC)
+        mask = cv2.imread(os.path.join(path, mask_path))
+        mask = cv2.resize(mask, dsize = save_size, interpolation = cv2.INTER_NEAREST)
+        real = cv2.imread(os.path.join(path, real_path))
+        real = cv2.resize(real, dsize = save_size, interpolation = cv2.INTER_CUBIC)
 
-            cv2.imwrite(save_comp_path, comp)
-            cv2.imwrite(save_mask_path, mask)
-            cv2.imwrite(save_real_path, real)
+        cv2.imwrite(save_comp_path, comp)
+        cv2.imwrite(save_mask_path, mask)
+        cv2.imwrite(save_real_path, real)
 
     f1.close()
     f2.close()
