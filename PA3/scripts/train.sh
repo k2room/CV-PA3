@@ -2,9 +2,9 @@
 #--dataset_root /jisu/dataset/iHarmony4resized256/ \
 
 python train.py \
---dataset_root <Write your own path> \
---name experiment_train_2080 \
---checkpoints_dir ./checkpoints/scratch/ \
+--dataset_root /home/work/CV-PA3/PA3/dataset_processing/ \
+--name experiment_IN_train \
+--checkpoints_dir /home/work/CV-PA3/PA3/checkpoints/IN \
 --model rainnet \
 --netG rainnet \
 --dataset_mode iharmony4 \
