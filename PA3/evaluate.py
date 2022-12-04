@@ -1,4 +1,5 @@
 # -*- utf-8 ----
+# python evaluate.py --dataset_root /home/work/CV-PA3/PA3/dataset_processing --save_dir evaluated --batch_size 16 --device cuda --store_image
 import argparse
 import numpy as np
 import matplotlib.pyplot as plt
@@ -51,7 +52,7 @@ if __name__ == '__main__':
     parser.add_argument('--store_image', action='store_true', required=False, help='whether store the result images')
     parser.add_argument('--device', default='cuda', type=str, help='device to running the code | default cuda')
     user_args = parser.parse_args()
-    if user_args.dataset_root is not 'none':
+    if user_args.dataset_root != 'none':
         cfg.dataset_root = user_args.dataset_root
 
     # ----------------- main --------------------
