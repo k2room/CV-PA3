@@ -293,44 +293,102 @@ class RainNet(nn.Module):
         norm_type_list = [get_norm_layer('instance'), get_norm_layer('rain')]
         # -------------------------------Network Settings-------------------------------------
 
-        # fill the blank
-        # layer 0
-        self.conv = nn.Conv2d(input_nc, ngf, kernel_size = 4, stride = 2, padding = 1, bias = False) # Convolutional layer
-        
-        # layer 1~12 : LReLU-Conv.-IN
-        # UnetBlockCodec __init__(self, outer_nc, inner_nc, input_nc=None, submodule=None, outermost=False, innermost=False, norm_layer=RAIN, use_dropout=False, use_attention=False, enc=True, dec=True):
-        self.unet1 = UnetBlockCodec(outer_nc = ngf*32, inner_nc = ngf*32, norm_layer = norm_layer, innermost = True, enc = norm_type_indicator[6], dec = norm_type_indicator[7]) # innermost block
-        self.unet2 = UnetBlockCodec(outer_nc = ngf*16, inner_nc = ngf*32, submodule = self.unet1, norm_layer = norm_layer, use_dropout = use_dropout, enc = norm_type_indicator[5], dec = norm_type_indicator[8]) # 2nd inner block
-        self.unet3 = UnetBlockCodec(outer_nc = ngf*8, inner_nc = ngf*16, submodule = self.unet2, norm_layer = norm_layer, use_dropout = use_dropout, enc = norm_type_indicator[4], dec = norm_type_indicator[9]) # 3th inner block
-        self.unet4 = UnetBlockCodec(outer_nc = ngf*4, inner_nc = ngf*8, submodule = self.unet3, norm_layer = norm_layer, use_dropout = use_dropout, enc = norm_type_indicator[3], dec = norm_type_indicator[10]) # 4th inner block
-        self.unet5 = UnetBlockCodec(outer_nc = ngf*2, inner_nc = ngf*4, submodule = self.unet4, norm_layer = norm_layer, use_dropout = use_dropout, use_attention = True, enc = norm_type_indicator[2], dec = norm_type_indicator[11]) # 5th inner block
-        self.unet6 = UnetBlockCodec(outer_nc = ngf, inner_nc = ngf*2, submodule = self.unet5, norm_layer = norm_layer, use_dropout = use_dropout, use_attention = True, enc = norm_type_indicator[1], dec = norm_type_indicator[12]) # 6th inner block
+        # fill the blank 
 
-        # layer 13
-        self.dconv = get_act_dconv(nn.ReLU(True), dims_in = ngf*4, dims_out = ngf, kernel_size = 4, stride = 2, padding = 1, bias = False)
-        self.dconv_norm = norm_type_list[norm_type_indicator[13]](ngf)
-        self.dconv_attention = nn.Sequential(nn.Conv2d(ngf*2, ngf*2, kernel_size = 1, stride = 1), nn.Sigmoid())
+        # layer 0 : Convolutional layer
+        self.conv = nn.Conv2d(in_channels = input_nc, out_channels = ngf, kernel_size = 4, stride = 2, padding = 1, bias = False)
+        
+        # layer 1 : LReLU-Conv.-IN
+        self.layer1 = get_act_conv(nn.LeakyReLU(0.2, True), dims_in = ngf, dims_out = ngf*2, kernel = 4, stride = 2, padding = 1, bias = False)
+        self.layer1_norm = norm_type_list[norm_type_indicator[0]](ngf*2)
+        
+        # layer 2 : LReLU-Conv.-IN
+        self.layer2 = get_act_conv(nn.LeakyReLU(0.2, True), dims_in = ngf*2, dims_out = ngf*4, kernel = 4, stride = 2, padding = 1, bias = False)
+        self.layer2_norm = norm_type_list[norm_type_indicator[1]](ngf*4)
+        
+        # layer 3 : LReLU-Conv.-IN
+        self.layer3 = get_act_conv(nn.LeakyReLU(0.2, True), dims_in = ngf*4, dims_out = ngf*8, kernel = 4, stride = 2, padding = 1, bias = False)
+        self.layer3_norm = norm_type_list[norm_type_indicator[2]](ngf*8)
+
+        # layer 4~6 : LReLU-Conv.-IN, layer 7~10 : LReLU-Conv.-IN + ReLU-Trans.Conv.-RAIN/IN
+        # UnetBlockCodec __init__(self, outer_nc, inner_nc, input_nc=None, submodule=None, outermost=False, innermost=False, norm_layer=RAIN, use_dropout=False, use_attention=False, enc=True, dec=True):
+        self.unet1 = UnetBlockCodec(outer_nc = ngf*16, inner_nc = ngf*16, innermost = True, norm_layer = norm_layer, enc = norm_type_indicator[6], dec = norm_type_indicator[7]) # innermost block
+        self.unet2 = UnetBlockCodec(outer_nc = ngf*16, inner_nc = ngf*16, submodule = self.unet1, norm_layer = norm_layer, use_dropout = use_dropout, enc = norm_type_indicator[5], dec = norm_type_indicator[8]) # 2nd inner block
+        self.unet3 = UnetBlockCodec(outer_nc = ngf*8, inner_nc = ngf*16, submodule = self.unet2, norm_layer = norm_layer, use_dropout = use_dropout, enc = norm_type_indicator[4], dec = norm_type_indicator[9]) # 3th inner block
+        self.unet4 = UnetBlockCodec(outer_nc = ngf*8, inner_nc = ngf*8, submodule = self.unet3, norm_layer = norm_layer, use_dropout = use_dropout, enc = norm_type_indicator[3], dec = norm_type_indicator[10]) # 4th inner block
+        self.unet5 = UnetBlockCodec(outer_nc = ngf*4, inner_nc = ngf*8, submodule = self.unet4, norm_layer = norm_layer, use_dropout = use_dropout, use_attention = True, enc = norm_type_indicator[2], dec = norm_type_indicator[11]) # 5th inner block
+        self.unet6 = UnetBlockCodec(outer_nc = ngf*2, inner_nc = ngf*4, submodule = self.unet5, norm_layer = norm_layer, use_dropout = use_dropout, use_attention = True, enc = norm_type_indicator[1], dec = norm_type_indicator[12]) # 6th inner block
+        self.unet7 = UnetBlockCodec(outer_nc = ngf, inner_nc = ngf*2, submodule = self.unet6, norm_layer = norm_layer, use_dropout = use_dropout, use_attention = True, enc = norm_type_indicator[0], dec = norm_type_indicator[13]) # outermost block
+        
+        # layer 11 : LReLU-Conv.-IN + ReLU-Trans.Conv.-RAIN/IN
+        self.layer11 = get_act_dconv(nn.ReLU(True), dims_in = ngf*8*2, dims_out = ngf*4, kernel = 4, stride = 2, padding = 1, bias = False)
+        self.layer11_norm = norm_type_list[norm_type_indicator[11]](ngf*4)
+        self.attention1 = nn.Sequential(nn.Conv2d(in_channels = ngf*8, out_channels = ngf*8, kernel_size = 1, stride = 1), nn.Sigmoid()) # attention layer
+
+        # layer 12 : LReLU-Conv.-IN + ReLU-Trans.Conv.-RAIN/IN
+        self.layer12 = get_act_dconv(nn.ReLU(True), dims_in = ngf*4*2, dims_out = ngf*2, kernel = 4, stride = 2, padding = 1, bias = False)
+        self.layer12_norm = norm_type_list[norm_type_indicator[12]](ngf*2)
+        self.attention2 = nn.Sequential(nn.Conv2d(in_channels = ngf*4, out_channels = ngf*4, kernel_size = 1, stride = 1), nn.Sigmoid()) # attention layer
+
+        # layer 13 : LReLU-Conv.-IN + ReLU-Trans.Conv.-RAIN/IN
+        self.layer13 = get_act_dconv(nn.ReLU(True), dims_in = ngf*2*2, dims_out = ngf, kernel = 4, stride = 2, padding = 1, bias = False)
+        self.layer13_norm = norm_type_list[norm_type_indicator[13]](ngf)
+        self.attention3 = nn.Sequential(nn.Conv2d(in_channels = ngf*2, out_channels = ngf*2, kernel_size = 1, stride = 1), nn.Sigmoid()) # attention layer
 
         # layer 14 : Trans.Conv-Tanh
-        self.out = nn.Sequential(nn.ReLU(True), nn.ConvTranspose2d(ngf*2, output_nc, kernel_size = 4, stride = 2, padding = 1), nn.Tanh())
+        self.layer14 = nn.Sequential(nn.ReLU(True), nn.ConvTranspose2d(ngf*2, output_nc, kernel_size = 4, stride = 2, padding = 1), nn.Tanh())
 
     def forward(self, x, mask):
         # fill the blank
         x0 = self.conv(x)
-        x1 = self.unet6(x0, mask)
-
-        x2 = self.dconv(x1)
-        if self.dconv_norm._get_name() in self.norm_namebuffer:
-            x2 = self.dconv_norm(x2, mask)
+        
+        x1 = self.layer1(x0)
+        if self.layer1_norm._get_name() in self.norm_namebuffer:
+            x1 = self.layer1_norm(x1, mask)
         else:
-            x2 = self.dconv_norm(x2)
-        x2 = torch.cat([x0, x2], 1)
-        if self.use_attention:
-            x2 = self.dconv_attention(x2) * x2
+            x1 = self.layer1_norm(x1)
 
-        x3 = self.out(x2)
+        x2 = self.layer2(x1)
+        if self.layer2_norm._get_name() in self.norm_namebuffer:
+            x2 = self.layer2_norm(x2, mask)
+        else:
+            x2 = self.layer2_norm(x2)
 
-        return x3
+        x3 = self.layer3(x2)
+        if self.layer2_norm._get_name() in self.norm_namebuffer:
+            x3 = self.layer3_norm(x3, mask)
+        else:
+            x3 = self.layer3_norm(x3)
+        
+        x4 = self.unet4(x3, mask)
+
+        x5 = self.layer11(x4)
+        if self.layer11_norm._get_name() in self.norm_namebuffer:
+            x5 = self.layer11_norm(x5, mask)
+        else:
+            x5 = self.layer11_norm(x5)
+        x5 = torch.cat([x2, x5], dim = 1)
+        x5 = self.attention1(x5)*x5
+        
+        x6 = self.layer12(x5)
+        if self.layer12_norm._get_name() in self.norm_namebuffer:
+            x6 = self.layer12_norm(x6, mask)
+        else:
+            x6 = self.layer12_norm(x6)
+        x6 = torch.cat([x1, x6], dim = 1)
+        x6 = self.attention2(x6)*x6
+        
+        x7 = self.layer13(x6)
+        if self.layer13_norm._get_name() in self.norm_namebuffer:
+            x7 = self.layer13_norm(x7, mask)
+        else:
+            x7 = self.layer13_norm(x7)
+        x7 = torch.cat([x0, x7], dim = 1)
+        x7 = self.attention3(x7)*x7
+        
+        x8 = self.layer14(x7)
+        
+        return x8
 
     def processImage(self, x, mask, background=None):
         if background is not None:
