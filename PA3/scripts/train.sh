@@ -20,7 +20,7 @@ python train.py \
 --num_threads 6 \
 --lambda_L1 100 \
 --print_freq 400 \
---gpu_ids 0 \
+--gpu_ids 0,1 \
 #--continue_train \
 #--load_iter 87 \
 #--epoch 88 \
