@@ -3,7 +3,7 @@
 
 python train.py \
 --dataset_root /home/work/CV-PA3/PA3/dataset_processing/ \
---name experiment_IN2_train \
+--name experiment_RAIN_train \
 --checkpoints_dir /home/work/CV-PA3/PA3/checkpoints \
 --model rainnet \
 --netG rainnet \

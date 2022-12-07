@@ -282,8 +282,8 @@ def get_act_dconv(act, dims_in, dims_out, kernel, stride, padding, bias):
 
 class RainNet(nn.Module):
     def __init__(self, input_nc, output_nc, ngf=64, norm_layer=RAIN,
-                 # norm_type_indicator=[0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1],
-                 norm_type_indicator=[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                 norm_type_indicator=[0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1],
+                #  norm_type_indicator=[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
                  use_dropout=False, use_attention=True):
         super(RainNet, self).__init__()
         self.input_nc = input_nc
@@ -341,50 +341,6 @@ class RainNet(nn.Module):
     def forward(self, x, mask):
         # fill the blank
         x0 = self.conv(x)
-        # x1 = self.layer1(x0)
-        # if self.layer1_norm._get_name() in self.norm_namebuffer:
-        #     x1 = self.layer1_norm(x1, mask)
-        # else:
-        #     x1 = self.layer1_norm(x1)
-
-        # x2 = self.layer2(x1)
-        # if self.layer2_norm._get_name() in self.norm_namebuffer:
-        #     x2 = self.layer2_norm(x2, mask)
-        # else:
-        #     x2 = self.layer2_norm(x2)
-
-        # x3 = self.layer3(x2)
-        # if self.layer2_norm._get_name() in self.norm_namebuffer:
-        #     x3 = self.layer3_norm(x3, mask)
-        # else:
-        #     x3 = self.layer3_norm(x3)
-        
-        # x4 = self.unet4(x3, mask)
-
-        # x5 = self.layer11(x4)
-        # if self.layer11_norm._get_name() in self.norm_namebuffer:
-        #     x5 = self.layer11_norm(x5, mask)
-        # else:
-        #     x5 = self.layer11_norm(x5)
-        # x5 = torch.cat([x2, x5], dim = 1)
-        # x5 = self.attention1(x5)*x5
-        
-        # x6 = self.layer12(x5)
-        # if self.layer12_norm._get_name() in self.norm_namebuffer:
-        #     x6 = self.layer12_norm(x6, mask)
-        # else:
-        #     x6 = self.layer12_norm(x6)
-        # x6 = torch.cat([x1, x6], dim = 1)
-        # x6 = self.attention2(x6)*x6
-        
-        # x7 = self.layer13(x6)
-        # if self.layer13_norm._get_name() in self.norm_namebuffer:
-        #     x7 = self.layer13_norm(x7, mask)
-        # else:
-        #     x7 = self.layer13_norm(x7)
-        # x7 = torch.cat([x0, x7], dim = 1)
-        # x7 = self.attention3(x7)*x7
-
         x1 = self.unet7(x0, mask)
         x2 = self.layer14(x1) 
         
