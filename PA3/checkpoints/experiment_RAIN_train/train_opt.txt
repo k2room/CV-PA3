@@ -18,7 +18,7 @@
                g_lr_ratio: 1.0                           
                  gan_mode: wgangp                        	[default: vanilla]
                  gp_ratio: 1.0                           
-                  gpu_ids: 0,1                           	[default: 0]
+                  gpu_ids: 0,1,2,3                       	[default: 0]
                 init_gain: 0.02                          
                 init_type: normal                        
                  input_nc: 3                             	[default: 4]
@@ -35,7 +35,7 @@
          max_dataset_size: inf                           
                     model: rainnet                       	[default: cycle_gan]
                n_layers_D: 3                             
-                     name: experiment_IN2_train          	[default: result_temp]
+                     name: experiment_RAIN_train         	[default: result_temp]
                       ndf: 64                            
                      netD: basic                         
                      netG: rainnet                       	[default: resnet_9blocks]
@@ -46,7 +46,7 @@
                   no_html: False                         
                     normD: instance                      
                     normG: RAIN                          	[default: RAN_Method1]
-              num_threads: 6                             	[default: 4]
+              num_threads: 16                            	[default: 4]
                 output_nc: 3                             
                     phase: train                         
                 pool_size: 0                             
