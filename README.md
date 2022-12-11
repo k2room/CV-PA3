@@ -23,3 +23,6 @@ python IHD_preprocessing.py # Add augmentation image path
 ```
 python preprocessing.py # set augmentation = True
 ```
+
+# saved model
+https://drive.google.com/drive/folders/1vA8T9HoRXCDy_PAWCGTR1G-Vi2XAfpA4?usp=share_link
