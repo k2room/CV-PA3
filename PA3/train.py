@@ -100,14 +100,16 @@ if __name__ == '__main__':
         batch_size=opt.batch_size,
         shuffle=True,
         num_workers=int(opt.num_threads),
-        drop_last=False)
+        # drop_last=False
+        drop_last=True)
 
     test_dataloader = Data.DataLoader(
         test_dataset,
         batch_size=1,
         shuffle=False,
         num_workers=int(opt.num_threads),
-        drop_last=False)
+        # drop_last=False
+        drop_last=True)
 
     print('The total batches of training images = %d' % len(train_dataloader))
 
