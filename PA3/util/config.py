@@ -14,7 +14,7 @@ cfg.dataset_mode = 'iharmony4'
 cfg.batch_size = 10
 cfg.beta1 = 0.5
 # cfg.checkpoints_dir = './checkpoints'
-cfg.checkpoints_dir = '/home/work/CV-PA3/PA3/checkpoints/IN'
+cfg.checkpoints_dir = '/home/work/CV-PA3/PA3/checkpoints/'
 # cfg.crop_size = 256
 # cfg.load_size = 256
 cfg.crop_size = 512
@@ -33,7 +33,7 @@ cfg.output_nc = 3
 cfg.ngf = 64
 cfg.no_dropout = False
 # ------ training -------------
-cfg.name = 'experiment_IN_train'
+cfg.name = 'experiment_RAIN_train'
 cfg.gpu_ids = 0, 1
 cfg.lambda_L1 = 100
 cfg.print_freq = 400
