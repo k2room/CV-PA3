@@ -1,4 +1,4 @@
-# computer vision pa #3
+# computer vision PA #3
 Env set & data download : https://github.com/junleen/RainNet
 ```
 python preprocessing.py # Image resize to 512*512
@@ -7,12 +7,10 @@ python preprocessing.py # Image resize to 512*512
 # result
 
 IN implement -> checkpoints/experiment_IN2_train, evaluated_IN2  
-latest_net_G : PSNR 32.6730, MSE 117.3482  
-5_net_G : PSNR 33.7992, MSE 89.6806
+latest_net_G, 5_net_G
 
 RAIN implement -> checkpoints/experiment_RAIN_train, evaluated_RAIN  
-latest_net_G : PSNR 34.7988, MSE 66.9516  
-3_net_G : 
+latest_net_G, 3_net_G
 
 
 # data augmentation
