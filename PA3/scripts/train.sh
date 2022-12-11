@@ -3,7 +3,7 @@
 
 python train.py \
 --dataset_root /home/work/CV-PA3/PA3/dataset_processing/ \
---name experiment_RAIN_train \
+--name experiment_RAIN_Aug_train \
 --checkpoints_dir /home/work/CV-PA3/PA3/checkpoints \
 --model rainnet \
 --netG rainnet \
@@ -16,11 +16,11 @@ python train.py \
 --niter 100 \
 --niter_decay 100 \
 --input_nc 3 \
---batch_size 11 \
---num_threads 6 \
+--batch_size 12 \
+--num_threads 12 \
 --lambda_L1 100 \
 --print_freq 400 \
---gpu_ids 0,1 \
+--gpu_ids 0,1,2,3 \
 #--continue_train \
 #--load_iter 87 \
 #--epoch 88 \
