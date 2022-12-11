@@ -297,20 +297,8 @@ class RainNet(nn.Module):
 
         # layer 0 : Convolutional layer
         self.conv = nn.Conv2d(in_channels = input_nc, out_channels = ngf, kernel_size = 4, stride = 2, padding = 1, bias = False)
-        
-        # # layer 1 : LReLU-Conv.-IN
-        # self.layer1 = get_act_conv(nn.LeakyReLU(0.2, True), dims_in = ngf, dims_out = ngf*2, kernel = 4, stride = 2, padding = 1, bias = False)
-        # self.layer1_norm = norm_type_list[norm_type_indicator[0]](ngf*2)
-        
-        # # layer 2 : LReLU-Conv.-IN
-        # self.layer2 = get_act_conv(nn.LeakyReLU(0.2, True), dims_in = ngf*2, dims_out = ngf*4, kernel = 4, stride = 2, padding = 1, bias = False)
-        # self.layer2_norm = norm_type_list[norm_type_indicator[1]](ngf*4)
-        
-        # # layer 3 : LReLU-Conv.-IN
-        # self.layer3 = get_act_conv(nn.LeakyReLU(0.2, True), dims_in = ngf*4, dims_out = ngf*8, kernel = 4, stride = 2, padding = 1, bias = False)
-        # self.layer3_norm = norm_type_list[norm_type_indicator[2]](ngf*8)
 
-        # layer 4~6 : LReLU-Conv.-IN, layer 7~10 : LReLU-Conv.-IN + ReLU-Trans.Conv.-RAIN/IN
+        # layer 1~13 : LReLU-Conv.-IN, layer 7~10 : LReLU-Conv.-IN + ReLU-Trans.Conv.-RAIN/IN
         # UnetBlockCodec __init__(self, outer_nc, inner_nc, input_nc=None, submodule=None, outermost=False, innermost=False, norm_layer=RAIN, use_dropout=False, use_attention=False, enc=True, dec=True):
         self.unet1 = UnetBlockCodec(outer_nc = ngf*16, inner_nc = ngf*16, innermost = True, norm_layer = norm_layer, enc = norm_type_indicator[6], dec = norm_type_indicator[7]) # innermost block
         self.unet2 = UnetBlockCodec(outer_nc = ngf*16, inner_nc = ngf*16, submodule = self.unet1, norm_layer = norm_layer, use_dropout = use_dropout, enc = norm_type_indicator[5], dec = norm_type_indicator[8]) # 2nd inner block
@@ -319,21 +307,6 @@ class RainNet(nn.Module):
         self.unet5 = UnetBlockCodec(outer_nc = ngf*4, inner_nc = ngf*8, submodule = self.unet4, norm_layer = norm_layer, use_dropout = use_dropout, use_attention = True, enc = norm_type_indicator[2], dec = norm_type_indicator[11]) # 5th inner block
         self.unet6 = UnetBlockCodec(outer_nc = ngf*2, inner_nc = ngf*4, submodule = self.unet5, norm_layer = norm_layer, use_dropout = use_dropout, use_attention = True, enc = norm_type_indicator[1], dec = norm_type_indicator[12]) # 6th inner block
         self.unet7 = UnetBlockCodec(outer_nc = ngf, inner_nc = ngf*2, submodule = self.unet6, norm_layer = norm_layer, use_dropout = use_dropout, use_attention = True, enc = norm_type_indicator[0], dec = norm_type_indicator[13]) # 
-
-        # # layer 11 : LReLU-Conv.-IN + ReLU-Trans.Conv.-RAIN/IN
-        # self.layer11 = get_act_dconv(nn.ReLU(True), dims_in = ngf*8*2, dims_out = ngf*4, kernel = 4, stride = 2, padding = 1, bias = False)
-        # self.layer11_norm = norm_type_list[norm_type_indicator[11]](ngf*4)
-        # self.attention1 = nn.Sequential(nn.Conv2d(in_channels = ngf*8, out_channels = ngf*8, kernel_size = 1, stride = 1), nn.Sigmoid()) # attention layer
-
-        # # layer 12 : LReLU-Conv.-IN + ReLU-Trans.Conv.-RAIN/IN
-        # self.layer12 = get_act_dconv(nn.ReLU(True), dims_in = ngf*4*2, dims_out = ngf*2, kernel = 4, stride = 2, padding = 1, bias = False)
-        # self.layer12_norm = norm_type_list[norm_type_indicator[12]](ngf*2)
-        # self.attention2 = nn.Sequential(nn.Conv2d(in_channels = ngf*4, out_channels = ngf*4, kernel_size = 1, stride = 1), nn.Sigmoid()) # attention layer
-
-        # # layer 13 : LReLU-Conv.-IN + ReLU-Trans.Conv.-RAIN/IN
-        # self.layer13 = get_act_dconv(nn.ReLU(True), dims_in = ngf*2*2, dims_out = ngf, kernel = 4, stride = 2, padding = 1, bias = False)
-        # self.layer13_norm = norm_type_list[norm_type_indicator[13]](ngf)
-        # self.attention3 = nn.Sequential(nn.Conv2d(in_channels = ngf*2, out_channels = ngf*2, kernel_size = 1, stride = 1), nn.Sigmoid()) # attention layer
 
         # layer 14 : Trans.Conv-Tanh
         self.layer14 = nn.Sequential(nn.ReLU(True), nn.ConvTranspose2d(ngf*2, output_nc, kernel_size = 4, stride = 2, padding = 1), nn.Tanh())
@@ -384,7 +357,8 @@ class UnetBlockCodec(nn.Module):
         use_bias = False
         if input_nc is None:
             input_nc = outer_nc
-        self.norm_namebuffer = ['RAIN', 'RAIN_Method_Learnable', 'RAIN_Method_BN']
+        # self.norm_namebuffer = ['RAIN', 'RAIN_Method_Learnable', 'RAIN_Method_BN']
+        self.norm_namebuffer = ['RAIN']
         if outermost:
             self.down = nn.Conv2d(input_nc, inner_nc, kernel_size=4, stride=2, padding=1, bias=use_bias)
             self.submodule = submodule
