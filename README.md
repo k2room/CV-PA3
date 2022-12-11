@@ -6,7 +6,7 @@ python preprocessing.py # Image resize to 512*512
 
 # result
 
-IN2 implement -> checkpoints/experiment_IN2_train, evaluated_IN  
+IN implement -> checkpoints/experiment_IN2_train, evaluated_IN2  
 latest_net_G : PSNR 32.6730, MSE 117.3482  
 5_net_G : PSNR 33.7992, MSE 89.6806
 
